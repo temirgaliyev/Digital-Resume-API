@@ -12,12 +12,13 @@ class BaseConfig:
 
 class MainConfig(BaseConfig):
     DEBUG = False
-    MONGO_URI = ""
+    MONGO_URI = "mongodb+srv://default_user:somerandompassword@cluster0-o3l0x.mongodb.net/test?retryWrites=true&w=majority"
 
 
 class DebugConfig(BaseConfig):
     DEBUG = True
-    MONGO_URI = ""
+    
+    MONGO_URI = "mongodb+srv://default_user:somerandompassword@cluster0-o3l0x.mongodb.net/test?retryWrites=true&w=majority"
 
 
 config = {
