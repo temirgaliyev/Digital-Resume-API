@@ -6,9 +6,9 @@ test = Blueprint('test', __name__)
 @test.route("")
 def home():
 	# return str(mongo.db)
-	from data.models import User
+	from models import UserModel
 
-	user = User('John', 'Doe', 'john@doe.com', hash('original_password'), '+123456789')
-	user = User.insert(user)
+	user = UserModel('John', 'Doe', 'john@doe.com', hash('original_password'), '+123456789')
+	user = UserModel.insert(user)
 	return str(user)
 
