@@ -1,8 +1,10 @@
 from application import mongo
 from bson.objectid import ObjectId
-from models import BaseModel
+from models import BaseModel, OrganizationModel
 
-from models import OrganizationModel
+
+def get_model():
+	return RecruiterModel
 
 class RecruiterModel(BaseModel):
 
@@ -24,63 +26,71 @@ class RecruiterModel(BaseModel):
 		return mongo.db.recruiters
 
 
-	@staticmethod
-	def _to_dict(recruiter):
-		recruiter_dict = {
-			"first_name": recruiter.first_name,
-			"last_name": recruiter.last_name,
-			"organization_id": recruiter.organization_id,
-			"email": recruiter.email,
-			"phone": recruiter.phone
-		}
-
-		return recruiter_dict
+	@staticmethod	
+	def _get_keys_list():
+		job_keys_list = ['first_name', 'last_name', 'organization_id', 'email', 'phone']
 
 
 	@staticmethod
 	def _is_insertable(recruiter):
-		is_recruiter_exists = True if RecruiterModel.find_by_dict({'$or': [ { 'email':recruiter.email }, { 'phone':recruiter.phone } ]}) else False
+		is_recruiter_exists = True if get_model().find_by_dict({'$or': [ { 'email':recruiter.email }, { 'phone':recruiter.phone } ]}) else False
+		if is_recruiter_exists:
+			return False, 'recruiter already exists'
+
 		is_organization_exists = True if OrganizationModel.find_by_id(recruiter.organization_id) else False
-		return  not is_recruiter_exists and is_organization_exists
+		if not is_organization_exists:
+			return False, 'organization does not exist'
+
+		return True
 	
 
 	@staticmethod
 	def find_by_email(email):
-		return RecruiterModel.find_by_dict({"email": email})
+		return get_model().find_by_dict({"email": email})
 
 
 	# =================================================================================================
 
 	@staticmethod
 	def find_by_id(_id):
-		base_dict = RecruiterModel._get_table().find_one({"_id": ObjectId(_id)})
-		return RecruiterModel._from_dict(base_dict)
+		base_dict = get_model()._get_table().find_one({"_id": ObjectId(_id)})
+		return get_model()._from_dict(base_dict)
 
 
 	@staticmethod
 	def find_by_dict(d):
-		base_dict = RecruiterModel._get_table().find_one(d)
-		return RecruiterModel._from_dict(base_dict)
+		base_dict = get_model()._get_table().find_one(d)
+		return get_model()._from_dict(base_dict)
 
 
 	@staticmethod
-	def _from_dict(base):
+	def _from_dict(_dict):
 		if base:
-			return RecruiterModel(**base)
+			return get_model()(**_dict)
 		
 		return None
+	
+
+	@staticmethod
+	def _to_dict(base, with_id=False):
+		keys_list = get_model()._get_keys_list()
+		_dict = {key:getattr(base, key) for key in keys_list}
+		
+		if with_id:
+			_dict['_id'] = ObjectId(base._id)
+		return _dict
 
 
 	@staticmethod
 	def insert_from_dict(base):
-		if not RecruiterModel._is_insertable(base):
+		if not get_model()._is_insertable(base):
 			return False 
 
-		inserted_id = RecruiterModel._get_table().insert_one(base).inserted_id
-		return RecruiterModel.find_by_id(inserted_id)
+		inserted_id = get_model()._get_table().insert_one(base).inserted_id
+		return get_model().find_by_id(inserted_id)
 
 
 
 	@staticmethod
 	def insert_from_model(base):
-		return RecruiterModel.insert_from_dict(RecruiterModel._to_dict(base))
+		return get_model().insert_from_dict(get_model()._to_dict(base))

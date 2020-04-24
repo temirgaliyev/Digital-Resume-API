@@ -2,6 +2,11 @@ from application import mongo
 from bson.objectid import ObjectId
 from models import BaseModel
 
+
+def get_model():
+	return OrganizationModel
+
+
 class OrganizationModel(BaseModel):
 
 	def __init__(self, code, name, description, _id=None):
@@ -20,54 +25,58 @@ class OrganizationModel(BaseModel):
 		return mongo.db.organizations
 
 
-	@staticmethod
-	def _to_dict(organization):
-		organization_dict = {
-			"code": organization.code,
-			"name": organization.name,
-			"description": organization.description
-		}
-
-		return organization_dict
+	@staticmethod	
+	def _get_keys_list():
+		job_keys_list = ['code', 'name', 'description']
 
 
 	@staticmethod
 	def _is_insertable(organization):
-		return OrganizationModel.find_by_dict({'$or': [ { 'code':organization.code }, { 'name':organization.name } ]}) is not None
+		return get_model().find_by_dict({'$or': [ { 'code':organization.code }, { 'name':organization.name } ]}) is not None
 
 
 	# =================================================================================================
 	
 	@staticmethod
 	def find_by_id(_id):
-		base_dict = OrganizationModel._get_table().find_one({"_id": ObjectId(_id)})
-		return OrganizationModel._from_dict(base_dict)
+		base_dict = get_model()._get_table().find_one({"_id": ObjectId(_id)})
+		return get_model()._from_dict(base_dict)
 
 
 	@staticmethod
 	def find_by_dict(d):
-		base_dict = OrganizationModel._get_table().find_one(d)
-		return OrganizationModel._from_dict(base_dict)
+		base_dict = get_model()._get_table().find_one(d)
+		return get_model()._from_dict(base_dict)
 
 
 	@staticmethod
-	def _from_dict(base):
+	def _from_dict(_dict):
 		if base:
-			return OrganizationModel(**base)
+			return get_model()(**_dict)
 		
 		return None
 
 
 	@staticmethod
+	def _to_dict(base, with_id=False):
+		keys_list = get_model()._get_keys_list()
+		_dict = {key:getattr(base, key) for key in keys_list}
+		
+		if with_id:
+			_dict['_id'] = ObjectId(base._id)
+		return _dict
+
+
+	@staticmethod
 	def insert_from_dict(base):
-		if not OrganizationModel._is_insertable(base):
+		if not get_model()._is_insertable(base):
 			return False 
 
-		inserted_id = OrganizationModel._get_table().insert_one(base).inserted_id
-		return OrganizationModel.find_by_id(inserted_id)
+		inserted_id = get_model()._get_table().insert_one(base).inserted_id
+		return get_model().find_by_id(inserted_id)
 
 
 
 	@staticmethod
 	def insert_from_model(base):
-		return OrganizationModel.insert_from_dict(OrganizationModel._to_dict(base))
+		return get_model().insert_from_dict(get_model()._to_dict(base))

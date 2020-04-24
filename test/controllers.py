@@ -1,9 +1,9 @@
 from flask import Blueprint
 from application import mongo
 
-test = Blueprint('test', __name__)
+test_blueprint = Blueprint('test', __name__)
 
-@test.route("")
+@test_blueprint.route("")
 def home():
 	# return str(mongo.db)
 	from models import UserModel
