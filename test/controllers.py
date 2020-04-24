@@ -8,7 +8,8 @@ def home():
 	# return str(mongo.db)
 	from models import UserModel
 
-	user = UserModel('John', 'Doe', 'john@doe.com', hash('original_password'), '+123456789')
-	user = UserModel.insert(user)
+	user = UserModel('Arystan', 'Amanzholov', 'arysisthebest@2k.20', hash('arysisthebest'), '+77bestphone')
+
+	user = UserModel.insert_from_model(user)
 	return str(user)
 

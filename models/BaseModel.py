@@ -38,30 +38,18 @@ class BaseModel(ABC):
 	# ===================================================================================
 
 	@staticmethod
-	@abstractmethod
 	def find_by_id(_id):
 		base_dict = get_model()._get_table().find_one({"_id": ObjectId(_id)})
 		return get_model()._from_dict(base_dict)
 
 
 	@staticmethod
-	@abstractmethod
-	def find_by_dict(search_pattern_dict):
-		base_dict = get_model()._get_table().find_one(search_pattern_dict)
+	def find_by_dict(_dict):
+		base_dict = get_model()._get_table().find_one(_dict)
 		return get_model()._from_dict(base_dict)
 
 
 	@staticmethod
-	@abstractmethod
-	def _from_dict(_dict):
-		if base:
-			return get_model()(**_dict)
-		
-		return None
-	
-
-	@staticmethod
-	@abstractmethod
 	def _to_dict(base, with_id=False):
 		keys_list = get_model()._get_keys_list()
 		_dict = {key:getattr(base, key) for key in keys_list}
@@ -72,17 +60,22 @@ class BaseModel(ABC):
 
 
 	@staticmethod
-	@abstractmethod
-	def insert_from_dict(base):
-		if not get_model()._is_insertable(base):
-			return False 
-
-		inserted_id = get_model()._get_table().insert_one(base).inserted_id
-		return get_model().find_by_id(inserted_id)
-
+	def _from_dict(_dict):
+		if _dict:
+			return get_model()(**_dict)
+		
+		return None
 
 
 	@staticmethod
-	@abstractmethod
+	def insert_from_dict(_dict):
+		if not get_model()._is_insertable(_dict):
+			return False 
+
+		inserted_id = get_model()._get_table().insert_one(_dict).inserted_id
+		return get_model().find_by_id(inserted_id)
+
+
+	@staticmethod
 	def insert_from_model(base):
 		return get_model().insert_from_dict(get_model()._to_dict(base))

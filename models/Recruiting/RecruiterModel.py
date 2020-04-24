@@ -29,11 +29,13 @@ class RecruiterModel(BaseModel):
 	@staticmethod	
 	def _get_keys_list():
 		job_keys_list = ['first_name', 'last_name', 'organization_id', 'email', 'phone']
+		return job_keys_list
 
 
 	@staticmethod
 	def _is_insertable(recruiter):
-		is_recruiter_exists = True if get_model().find_by_dict({'$or': [ { 'email':recruiter.email }, { 'phone':recruiter.phone } ]}) else False
+		condition = {'$or': [ { 'email':recruiter.email }, { 'phone':recruiter.phone } ]}
+		is_recruiter_exists = True if get_model().find_by_dict(condition) else False
 		if is_recruiter_exists:
 			return False, 'recruiter already exists'
 
@@ -58,18 +60,10 @@ class RecruiterModel(BaseModel):
 
 
 	@staticmethod
-	def find_by_dict(d):
-		base_dict = get_model()._get_table().find_one(d)
+	def find_by_dict(_dict):
+		base_dict = get_model()._get_table().find_one(_dict)
 		return get_model()._from_dict(base_dict)
 
-
-	@staticmethod
-	def _from_dict(_dict):
-		if base:
-			return get_model()(**_dict)
-		
-		return None
-	
 
 	@staticmethod
 	def _to_dict(base, with_id=False):
@@ -82,13 +76,20 @@ class RecruiterModel(BaseModel):
 
 
 	@staticmethod
-	def insert_from_dict(base):
-		if not get_model()._is_insertable(base):
+	def _from_dict(_dict):
+		if _dict:
+			return get_model()(**_dict)
+		
+		return None
+
+
+	@staticmethod
+	def insert_from_dict(_dict):
+		if not get_model()._is_insertable(_dict):
 			return False 
 
-		inserted_id = get_model()._get_table().insert_one(base).inserted_id
+		inserted_id = get_model()._get_table().insert_one(_dict).inserted_id
 		return get_model().find_by_id(inserted_id)
-
 
 
 	@staticmethod

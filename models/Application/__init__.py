@@ -1,1 +1,1 @@
-from models.Application.ApplicantionModel import ApplicantionModel
+# from models.Application.ApplicantionModel import ApplicantionModel
