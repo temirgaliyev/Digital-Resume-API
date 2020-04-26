@@ -1,2 +1,4 @@
-from models.BaseModel import BaseModel
-from models.Applicant import *
+from models.applicant import *
+from models.job import *
+from models.recruiting import *
+from models.application import *
