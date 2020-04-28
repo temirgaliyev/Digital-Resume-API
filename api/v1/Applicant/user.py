@@ -13,11 +13,11 @@ class UserApi(Resource):
 		args = request.args
 		
 		if 'id' in args:
-			return me_obj_to_serializable(User.objects.get(id=args['id'])), 200
+			return me_obj_to_serializable(User.objects.get(id=args['id']))
 		elif 'email' in args:
-			return me_obj_to_serializable(User.objects.get(email=args['email'])), 200
+			return me_obj_to_serializable(User.objects.get(email=args['email']))
 		else:
-			return me_obj_to_serializable(User.objects), 200
+			return me_obj_to_serializable(User.objects)
 
 
 	@exception_decorator((NotUniqueError, ValidationError, Exception))
@@ -33,7 +33,7 @@ class UserApi(Resource):
 		user.password = custom_hash(json['password'])
 		user.save()
 		
-		return me_obj_to_serializable(user), 200
+		return me_obj_to_serializable(user)
 
 
 	@exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
@@ -64,4 +64,4 @@ class UserApi(Resource):
 		
 		user.reload()
 
-		return me_obj_to_serializable(user), 200
+		return me_obj_to_serializable(user)

@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import request
 from mongoengine.errors import NotUniqueError, ValidationError, DoesNotExist
+from bson.objectid import ObjectId
 
 from models import Experience
 from api.utils import abort_if_invalid_request_params, me_obj_to_serializable, exception_decorator
@@ -13,11 +14,11 @@ class ExperienceApi(Resource):
 		args = request.args
 
 		if 'id' in args:
-			return me_obj_to_serializable(Experience.objects.get(id=args['id'])), 200
+			return me_obj_to_serializable(Experience.objects.get(id=args['id']))
 		elif 'user' in args:
-			return me_obj_to_serializable(Experience.objects(user=args['user'])), 200
+			return me_obj_to_serializable(Experience.objects(user=args['user']))
 		else:
-			return me_obj_to_serializable(Experience.objects), 200
+			return me_obj_to_serializable(Experience.objects)
 
 
 	@exception_decorator((NotUniqueError, ValidationError, Exception))
@@ -27,7 +28,7 @@ class ExperienceApi(Resource):
 		abort_if_invalid_request_params(json, ['user', 'position', 'organization', 'job_category', 'date_start', 'date_end', 'country'])
 
 		experience = Experience()
-		experience.user = json['user']			
+		experience.user = ObjectId(json['user'])		
 		experience.position = json['position']
 		experience.organization = json['organization']
 		experience.job_category = json['job_category']
@@ -36,19 +37,15 @@ class ExperienceApi(Resource):
 		experience.country = json['country']
 		
 		experience.save()
-		return me_obj_to_serializable(experience), 200
+		return me_obj_to_serializable(experience)
 
 
 	@exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
 	def put(self):
 		json = request.json
+		abort_if_invalid_request_params(json, ['id'])
 
-		if 'id' in json:
-			experience = Experience.objects.get(id=json['id'])
-		elif 'user'in json:
-			experience = Experience.objects.get(user=json['user'])
-		else:
-			abort_if_invalid_request_params(json, ['id', 'user'])
+		experience = Experience.objects.get(id=json['id'])
 
 		if 'position' in json and json['position'] != experience['position']:
 			experience.update(position = json['position'])
@@ -70,4 +67,4 @@ class ExperienceApi(Resource):
 		
 		experience.reload()
 
-		return me_obj_to_serializable(experience), 200
+		return me_obj_to_serializable(experience)
