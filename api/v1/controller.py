@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api
-from api.v1.applicant import UserApi
+
+from api.v1.Applicant import *
 
 controller = Blueprint('v1', __name__)
 api = Api(controller)
