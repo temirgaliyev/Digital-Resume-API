@@ -49,22 +49,98 @@ class ResumeApi(Resource):
 		return me_obj_to_serializable(resume)
 
 
-	# @exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
-	# def put(self):
-	# 	json = request.json
+	@exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
+	def put(self):
+		json = request.json
 
-	# 	abort_if_invalid_request_params(json, ['id'])
-	# 	resume = Resume.objects.get(id=json['id'])
+		abort_if_invalid_request_params(json, ['id', 'summary'])
+		resume = Resume.objects.get(id=json['id'])
+		resume.update(summary = json['summary'])		
+		resume.reload()
 
-	# 	if 'title' in json and json['title'] != resume['title']:
-	# 		resume.update(title = json['title'])
+		return me_obj_to_serializable(resume)
 
-	# 	if 'url' in json and json['url'] != resume['url']:
-	# 		resume.update(url = json['url'])
+
+	@exception_decorator((DoesNotExist, ValidationError, Exception))
+	def delete(self):
+		json = request.json
+		abort_if_invalid_request_params(json, ['id'])
+
+		resume = Resume.objects.get(id=json['id']).delete()
+
+		return None
+
+
+class ResumeExperiencesApi(Resource):
+	
+	@exception_decorator((DoesNotExist, Exception))
+	def get(self):
+		args = request.args
+		abort_if_invalid_request_params(args, ['id'])
+		return me_obj_to_serializable(Resume.objects.get(id=args['id'])['experiences'])
+
+
+	@exception_decorator((NotUniqueError, ValidationError, Exception))
+	def post(self):
+
+		json = request.json
+		abort_if_invalid_request_params(json, ['id' ,'experiences'])
+
+		resume = Resume.objects.get(id=json['id'])
+		for _id in json['experiences']:
+			resume.update(add_to_set__experiences=ObjectId(_id))
+		resume.reload()
+
+		return me_obj_to_serializable(resume)
+
+
+	@exception_decorator((DoesNotExist, ValidationError, Exception))
+	def delete(self):
+		json = request.json
+		abort_if_invalid_request_params(json, ['id' ,'experiences'])
+
+		resume = Resume.objects.get(id=json['id'])
+		for _id in json['experiences']:
+			resume.update(pull__experiences=ObjectId(_id))
+		resume.reload()
 		
-	# 	resume.reload()
+		return me_obj_to_serializable(resume)
 
-	# 	return me_obj_to_serializable(resume)
+
+class ResumeEducationsApi(Resource):
+	
+	@exception_decorator((DoesNotExist, Exception))
+	def get(self):
+		args = request.args
+		abort_if_invalid_request_params(args, ['id'])
+		return me_obj_to_serializable(Resume.objects.get(id=args['id'])['educations'])
+
+
+	@exception_decorator((NotUniqueError, ValidationError, Exception))
+	def post(self):
+
+		json = request.json
+		abort_if_invalid_request_params(json, ['id' ,'educations'])
+
+		resume = Resume.objects.get(id=json['id'])
+		for _id in json['educations']:
+			resume.update(add_to_set__educations=ObjectId(_id))
+		resume.reload()
+
+		return me_obj_to_serializable(resume)
+
+
+	@exception_decorator((DoesNotExist, ValidationError, Exception))
+	def delete(self):
+		json = request.json
+		abort_if_invalid_request_params(json, ['id' ,'educations'])
+
+		resume = Resume.objects.get(id=json['id'])
+		for _id in json['educations']:
+			resume.update(pull__educations=ObjectId(_id))
+		resume.reload()
+		
+		return me_obj_to_serializable(resume)
 
 
 class ResumeCertificatesApi(Resource):
@@ -90,15 +166,51 @@ class ResumeCertificatesApi(Resource):
 		return me_obj_to_serializable(resume)
 
 
-	@exception_decorator((NotUniqueError, ValidationError, Exception))
+	@exception_decorator((DoesNotExist, ValidationError, Exception))
 	def delete(self):
-
 		json = request.json
 		abort_if_invalid_request_params(json, ['id' ,'certificates'])
 
 		resume = Resume.objects.get(id=json['id'])
 		for _id in json['certificates']:
 			resume.update(pull__certificates=ObjectId(_id))
+		resume.reload()
+		
+		return me_obj_to_serializable(resume)
+
+
+
+class ResumeMedcardsApi(Resource):
+	
+	@exception_decorator((DoesNotExist, Exception))
+	def get(self):
+		args = request.args
+		abort_if_invalid_request_params(args, ['id'])
+		return me_obj_to_serializable(Resume.objects.get(id=args['id'])['medcards'])
+
+
+	@exception_decorator((NotUniqueError, ValidationError, Exception))
+	def post(self):
+
+		json = request.json
+		abort_if_invalid_request_params(json, ['id' ,'medcards'])
+
+		resume = Resume.objects.get(id=json['id'])
+		for _id in json['medcards']:
+			resume.update(add_to_set__medcards=ObjectId(_id))
+		resume.reload()
+
+		return me_obj_to_serializable(resume)
+
+
+	@exception_decorator((DoesNotExist, ValidationError, Exception))
+	def delete(self):
+		json = request.json
+		abort_if_invalid_request_params(json, ['id' ,'medcards'])
+
+		resume = Resume.objects.get(id=json['id'])
+		for _id in json['medcards']:
+			resume.update(pull__medcards=ObjectId(_id))
 		resume.reload()
 		
 		return me_obj_to_serializable(resume)

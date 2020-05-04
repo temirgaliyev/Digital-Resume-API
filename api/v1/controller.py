@@ -9,10 +9,13 @@ api = Api(controller)
 api.add_resource(UserApi, '/user', '/user/')
 api.add_resource(ExperienceApi, '/experience', '/experience/')
 api.add_resource(EducationApi, '/education', '/education/')
-api.add_resource(CertificateApi, '/certificate', '/certificate/')
 api.add_resource(MedcardApi, '/medcard', '/medcard/')
+api.add_resource(CertificateApi, '/certificate', '/certificate/')
 
 api.add_resource(ResumeApi, '/resume', '/resume/')
+api.add_resource(ResumeExperiencesApi, '/resume/experiences', '/resume/experiences/')
+api.add_resource(ResumeEducationsApi, '/resume/educations', '/resume/educations/')
+api.add_resource(ResumeMedcardsApi, '/resume/medcards', '/resume/medcards/')
 api.add_resource(ResumeCertificatesApi, '/resume/certificates', '/resume/certificates/')
 
 # '/resume', '/resume/'
