@@ -18,6 +18,10 @@ api.add_resource(ResumeEducationsApi, '/resume/educations', '/resume/educations/
 api.add_resource(ResumeMedcardsApi, '/resume/medcards', '/resume/medcards/')
 api.add_resource(ResumeCertificatesApi, '/resume/certificates', '/resume/certificates/')
 
+
+api.add_resource(ResumeApi, '/job', '/job/')
+api.add_resource(ResumeApi, '/jobcategory', '/jobcategory/')
+
 # '/resume', '/resume/'
 		# /create (standart)
 		# /delete (many by user, one by id)

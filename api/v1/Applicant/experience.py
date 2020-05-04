@@ -68,3 +68,11 @@ class ExperienceApi(Resource):
 		experience.reload()
 
 		return me_obj_to_serializable(experience)
+
+
+	@exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
+	def delete(self):
+		json = request.json
+		abort_if_invalid_request_params(json, ['id'])
+		Experience.objects.get(id=json['id']).delete()
+		return None

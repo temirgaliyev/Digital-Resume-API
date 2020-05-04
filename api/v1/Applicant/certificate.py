@@ -56,3 +56,11 @@ class CertificateApi(Resource):
 		certificate.reload()
 
 		return me_obj_to_serializable(certificate)
+
+
+	@exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
+	def delete(self):
+		json = request.json
+		abort_if_invalid_request_params(json, ['id'])
+		Certificate.objects.get(id=json['id']).delete()
+		return None

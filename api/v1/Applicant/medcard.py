@@ -52,3 +52,11 @@ class MedcardApi(Resource):
 		medcard.reload()
 
 		return me_obj_to_serializable(medcard)
+
+
+	@exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
+	def delete(self):
+		json = request.json
+		abort_if_invalid_request_params(json, ['id'])
+		Medcard.objects.get(id=json['id']).delete()
+		return None

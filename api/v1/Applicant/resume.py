@@ -61,12 +61,12 @@ class ResumeApi(Resource):
 		return me_obj_to_serializable(resume)
 
 
-	@exception_decorator((DoesNotExist, ValidationError, Exception))
+	@exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
 	def delete(self):
 		json = request.json
 		abort_if_invalid_request_params(json, ['id'])
 
-		resume = Resume.objects.get(id=json['id']).delete()
+		Resume.objects.get(id=json['id']).delete()
 
 		return None
 
