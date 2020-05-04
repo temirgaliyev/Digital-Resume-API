@@ -13,9 +13,13 @@ def custom_hash(string):
 
 
 def abort_if_invalid_request_params(_dict, attrs):
+	not_contained_attrs = []
 	for attr in attrs:
 		if attr not in _dict:
-			abort(400, f"Request must contain '{attr}'")
+			not_contained_attrs.append(attr)
+			
+	if not_contained_attrs:
+		abort(400, f"Request must contain keys: '{not_contained_attrs}'")
 
 
 def me_obj_to_serializable(obj, need_id=True):
