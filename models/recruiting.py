@@ -2,9 +2,9 @@ from mongoengine import Document, StringField, EmailField, ReferenceField, IntFi
 
 
 class Organization(Document):
-	code = StringField(required=True)
+	code = StringField(required=True, unique=True)
 	name = StringField(required=True)
-	description = StringField(required=True)
+	description = StringField()
 
 
 class Recruiter(Document):
@@ -12,12 +12,13 @@ class Recruiter(Document):
 	last_name = StringField(required=True)
 	email = EmailField(required=True, unique=True)
 	phone = StringField(required=True, unique=True)
+	password = StringField(required=True)
 	organization = StringField(required=True)
 
 
 class ApplicantEvaluation(Document):
-	notes = StringField()
 	recruiter = ReferenceField(Recruiter, required=True)
 	application = ReferenceField('Application', required=True)
+	notes = StringField()
 	in_progress = BooleanField(default=True)
 	hired = BooleanField(null=True)

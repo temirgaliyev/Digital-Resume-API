@@ -16,6 +16,8 @@ class UserApi(Resource):
 			return me_obj_to_serializable(User.objects.get(id=args['id']))
 		elif 'email' in args:
 			return me_obj_to_serializable(User.objects.get(email=args['email']))
+		elif 'phone' in args:
+			return me_obj_to_serializable(User.objects.get(phone=args['phone']))
 		else:
 			return me_obj_to_serializable(User.objects)
 
@@ -65,3 +67,10 @@ class UserApi(Resource):
 		user.reload()
 
 		return me_obj_to_serializable(user)
+
+	@exception_decorator((DoesNotExist, NotUniqueError, ValidationError, Exception))
+	def delete(self):
+		json = request.json
+		abort_if_invalid_request_params(json, ['id'])
+		User.objects.get(id=json['id']).delete()		
+		return None		

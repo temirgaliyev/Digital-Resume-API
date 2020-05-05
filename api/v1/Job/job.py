@@ -3,7 +3,7 @@ from flask import request
 from mongoengine.errors import NotUniqueError, ValidationError, DoesNotExist
 from bson.objectid import ObjectId
 
-from models import Job, Job
+from models import Job, JobCategory
 from api.utils import abort_if_invalid_request_params, me_obj_to_serializable, exception_decorator
 
 class JobApi(Resource):
